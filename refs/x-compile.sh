@@ -338,6 +338,9 @@ case ${1} in
 	kindle5 | k4 | K4 | k5 | K5 )
 		KINDLE_TC="K5"
 	;;
+	khf | kinldehf | pw2hf )
+		KINDLE_TC="PW2HF"
+	;;
 	kindlepw2 | pw2 | PW2 )
 		KINDLE_TC="PW2"
 	;;
@@ -621,9 +624,18 @@ case ${KINDLE_TC} in
 
 		DEVICE_USERSTORE="/mnt/us"
 	;;
-	PW2 )
-		ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mthumb"
-		CROSS_TC="arm-kindlepw2-linux-gnueabi"
+	PW2 | PW2HF )
+		case ${KINDLE_TC} in
+			PW2 )
+				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mthumb"
+				CROSS_TC="arm-kindlepw2-linux-gnueabi"
+				;;
+			PW2HF )
+				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -mthumb"
+
+				CROSS_TC="arm-kindlepw2-linux-gnueabihf"
+				;;
+		esac
 		TC_BUILD_DIR="${HOME}/Kindle/CrossTool/Build_${KINDLE_TC}"
 
 		# Export it for our CMakeCross TC file

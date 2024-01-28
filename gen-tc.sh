@@ -87,6 +87,7 @@ Supported platforms:
 	kindle
 	kindle5
 	kindlepw2
+	kindlehf
 	kobo
 	nickel
 	remarkable
@@ -117,6 +118,12 @@ case $1 in
 			https://github.com/NiLuJe/crosstool-ng.git \
 			a01c29cd09bff34ec9913c41cb850fb9a61c3bf2 \
 			"arm-${1}-linux-gnueabihf"
+		;;
+	kindlehf)
+		Build_CT-NG \
+			https://github.com/NotMarek/crosstool-ng.git \
+			58e622ba27a43c119eaf3ac3ddf2f703bc7ba465 \
+			"arm-kindle-linux-gnueabihf"
 		;;
 	kindlepw2)
 		Build_CT-NG \
@@ -168,6 +175,9 @@ case $1 in
 		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/lib/libhwconfig.so"
 		wget https://github.com/blchinezu/pocketbook-sdk/raw/5.17/FRSCSDK/arm-none-linux-gnueabi/sysroot/usr/lib/libbookstate.so \
 			-O "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/lib/libbookstate.so"
+		wget https://github.com/blchinezu/pocketbook-sdk/raw/5.17/SDK_481/arm-obreey-linux-gnueabi/sysroot/usr/lib/libncurses.so.5.9 \
+			-O "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/lib/libncurses.so.5.9"
+		
 		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/lib/libbookstate.so"
 		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/lib"
 		chmod a+w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include"
@@ -192,7 +202,10 @@ case $1 in
 		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include/hwconfig.h"
 		wget https://github.com/blchinezu/pocketbook-sdk/raw/5.17/FRSCSDK/arm-none-linux-gnueabi/sysroot/usr/include/bookstate.h \
 			-O "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include/bookstate.h"
+		wget https://github.com/blchinezu/pocketbook-sdk/raw/5.17/SDK_481/arm-obreey-linux-gnueabi/sysroot/usr/include/curses.h \
+			-O "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include/curses.h"
 		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include/bookstate.h"
+		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include/curses.h"
 		chmod a-w "${HOME}/x-tools/arm-${1}-linux-gnueabi/arm-${1}-linux-gnueabi/sysroot/usr/include"
 		;;
 	bookeen)
