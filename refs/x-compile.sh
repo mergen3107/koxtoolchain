@@ -631,7 +631,7 @@ case ${KINDLE_TC} in
 				CROSS_TC="arm-kindlepw2-linux-gnueabi"
 				;;
 			KHF )
-				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -mthumb"
+				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a53 -mfpu=neon -mfloat-abi=hard -mthumb"
 
 				CROSS_TC="arm-kindlehf-linux-gnueabihf"
 				;;
