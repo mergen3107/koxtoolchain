@@ -73,6 +73,7 @@ Due to a whole lot of legacy baggage, the names of the various Kindle TCs may be
 |   kindle  |      Kindle 2, DX, DXg, 3     | kindle-legacy |
 |  kindle5  |      Kindle 4, Touch, PW1     |     kindle    |
 | kindlepw2 | Kindle PW2 & everything since |   kindlepw2   |
+| kindlehf  | Kindles on FW >= 5.16.3       |   kindlehf    |
 
 No such worries on Kobo & Cervantes, though ;).  
 
