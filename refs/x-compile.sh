@@ -67,13 +67,13 @@ update_title_info()
 			pkgCount="$((pkgCount - 2))"
 		fi
 		# There's Gandalf which we only build for K5 & PW2...
-		if [[ "${KINDLE_TC}" != "K5" ]] && [[ "${KINDLE_TC}" != "PW2" ]] && [[ "${KINDLE_TC}" != "PW2HF" ]] ; then
+		if [[ "${KINDLE_TC}" != "K5" ]] && [[ "${KINDLE_TC}" != "PW2" ]] && [[ "${KINDLE_TC}" != "KHF" ]] ; then
 			pkgCount="$((pkgCount - 1))"
 		fi
 		# There's nettle vs. nettle-git
 		pkgCount="$((pkgCount - 1))"
 		# There's ICU which we don't always build...
-		if [[ "${KINDLE_TC}" != "K5" ]] && [[ "${KINDLE_TC}" != "PW2" ]] && [[ "${KINDLE_TC}" != "PW2HF" ]] && [[ "${KINDLE_TC}" != "KOBO" ]] ; then
+		if [[ "${KINDLE_TC}" != "K5" ]] && [[ "${KINDLE_TC}" != "PW2" ]] && [[ "${KINDLE_TC}" != "KHF" ]] && [[ "${KINDLE_TC}" != "KOBO" ]] ; then
 			pkgCount="$((pkgCount - 1))"
 		fi
 		# There's ltrace which we don't build on the K3...
@@ -338,8 +338,8 @@ case ${1} in
 	kindle5 | k4 | K4 | k5 | K5 )
 		KINDLE_TC="K5"
 	;;
-	khf | kinldehf | pw2hf )
-		KINDLE_TC="PW2HF"
+	khf | kinldehf )
+		KINDLE_TC="KHF"
 	;;
 	kindlepw2 | pw2 | PW2 )
 		KINDLE_TC="PW2"
@@ -624,16 +624,16 @@ case ${KINDLE_TC} in
 
 		DEVICE_USERSTORE="/mnt/us"
 	;;
-	PW2 | PW2HF )
+	PW2 | KHF )
 		case ${KINDLE_TC} in
 			PW2 )
 				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mthumb"
 				CROSS_TC="arm-kindlepw2-linux-gnueabi"
 				;;
-			PW2HF )
+			KHF )
 				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -mthumb"
 
-				CROSS_TC="arm-kindlepw2-linux-gnueabihf"
+				CROSS_TC="arm-kindlehf-linux-gnueabihf"
 				;;
 		esac
 		TC_BUILD_DIR="${HOME}/Kindle/CrossTool/Build_${KINDLE_TC}"
@@ -1665,7 +1665,7 @@ make install-exec
 make install-pkgconfigDATA
 ${CROSS_TC}-strip --strip-unneeded ../bin/fc-scan
 cp ../bin/fc-scan ${BASE_HACKDIR}/Fonts/src/linkfonts/bin/fc-scan
-if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	${CROSS_TC}-strip --strip-unneeded ../bin/fc-list
 	cp ../bin/fc-list ${BASE_HACKDIR}/Fonts/src/linkfonts/bin/fc-list
 fi
@@ -1843,7 +1843,7 @@ if [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 fi
 
 # Build a speciifc version for the Rescue Pack, too, with a slightly different config...
-if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 	echo "* Building dropbear (diags) . . ."
 	echo ""
 	cd ..
@@ -2102,7 +2102,7 @@ fi
 export CPPFLAGS="${BASE_CPPFLAGS}"
 cp busybox ${BASE_HACKDIR}/USBNetwork/src/usbnet/bin/busybox
 # And now for Gandalf...
-if [[ "${KINDLE_TC}" == "K5" || "${KINDLE_TC}" == "PW2" || "${KINDLE_TC}" == "PW2HF" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" || "${KINDLE_TC}" == "PW2" || "${KINDLE_TC}" == "KHF" ]] ; then
 	make distclean
 	make allnoconfig
 	sleep 5
@@ -2168,7 +2168,7 @@ patch -p1 < /usr/portage/dev-libs/openssl/files/openssl-1.1.0j-parallel_install_
 # NOTE: When Amazon ported FW 5.4.x to the PW1, they apparently helpfully backported this regression too, so apply that to K5 builds, too...
 # NOTE: Since OpenSSL 1.0.2, there's also the crypto ARMv8 stuff, but that of course will never happen for us, so we can just ditch it.
 # NOTE: Appears to be okay on Kobo... Or at least it doesn't spam dmesg ;).
-if [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "K3" ]] ; then
+if [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "K3" ]] ; then
 	patch -p1 < ${SVN_ROOT}/Configs/trunk/Kindle/Misc/openssl-1.1.1d-nerf-armv7_tick_armv8-armcaps.patch
 fi
 # NOTE: getauxval appeared in glibc 2.16, but we can't pick it up on Kobo, since those run eglibc 2_15... Nerf it (if we're using glibc 2.16).
@@ -2291,7 +2291,7 @@ if [[ "${KINDLE_TC}" == "K3" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	else
 		./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --with-ldflags="${LDFLAGS}" --disable-etc-default-login --disable-lastlog --with-openssl --with-md5-passwords --with-ssl-engine --disable-strip --without-stackprotect
 	fi
-elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 	if [[ -d "${DEVICE_USERSTORE}/usbnet" ]] ; then
 		./configure --prefix=${DEVICE_USERSTORE}/usbnet --with-pid-dir=${DEVICE_USERSTORE}/usbnet/run --with-privsep-path=${DEVICE_USERSTORE}/usbnet/empty --host=${CROSS_TC} --with-ldflags="${LDFLAGS}" --disable-etc-default-login --disable-lastlog --with-openssl --with-md5-passwords --with-ssl-engine --disable-strip
 	else
@@ -2456,7 +2456,7 @@ ${CROSS_TC}-strip --strip-unneeded ${BASE_HACKDIR}/USBNetwork/src/usbnet/lib/lib
 cp ../lib/libtinfow.so.${NCURSES_SOVER} ${BASE_HACKDIR}/USBNetwork/src/usbnet/lib/libtinfow.so.${NCURSES_SOVER%%.*}
 ${CROSS_TC}-strip --strip-unneeded ${BASE_HACKDIR}/USBNetwork/src/usbnet/lib/libtinfow.so.${NCURSES_SOVER%%.*}
 # Update termcap DB...
-if [[ "${KINDLE_TC}" != "PW2" ]] || [[ "${KINDLE_TC}" != "PW2HF" ]] ; then
+if [[ "${KINDLE_TC}" != "PW2" ]] || [[ "${KINDLE_TC}" != "KHF" ]] ; then
 	for termdb in $(find ${BASE_HACKDIR}/USBNetwork/src/usbnet/etc/terminfo -type f) ; do
 		termdb_file="${termdb##*/}"
 		termdb_dir="${termdb_file:0:1}"
@@ -2542,7 +2542,7 @@ patch -p1 < /usr/portage/sys-process/lsof/files/lsof-4.94-arm-sigbus-fix.patch
 export CPPFLAGS="${BASE_CPPFLAGS} -DHASNOTRPC -DHASNORPC_H"
 if [[ "${KINDLE_TC}" == "K3" ]] ; then
 	LSOF_CC="${CROSS_TC}-gcc" LSOF_AR="${CROSS_TC}-gcc-ar rc" LSOF_RANLIB="${CROSS_TC}-gcc-ranlib" LSOF_NM="${CROSS_TC}-gcc-nm" LSOF_CFGF="${CFLAGS} ${CPPFLAGS}" LSOF_CFGL="${CFLAGS} ${LDFLAGS}" LSOF_ARCH="armv6l" LSOF_INCLUDE="${TC_BUILD_DIR}/include" LINUX_CLIB="-DGLIBCV=2" LINUX_HASSELINUX="N" ./Configure -n linux
-elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	LSOF_CC="${CROSS_TC}-gcc" LSOF_AR="${CROSS_TC}-gcc-ar rc" LSOF_RANLIB="${CROSS_TC}-gcc-ranlib" LSOF_NM="${CROSS_TC}-gcc-nm" LSOF_CFGF="${CFLAGS} ${CPPFLAGS}" LSOF_CFGL="${CFLAGS} ${LDFLAGS}" LSOF_ARCH="armv7-a" LSOF_INCLUDE="${TC_BUILD_DIR}/include" LINUX_CLIB="-DGLIBCV=2" LINUX_HASSELINUX="N" ./Configure -n linux
 fi
 make ${JOBSFLAGS} DEBUG="" all
@@ -2579,7 +2579,7 @@ sed -e "/^AC_PROG_CXX_FOR_BUILD$/d" -i configure.ac
 export CXXFLAGS="${BASE_CFLAGS} -DGOOGLE_PROTOBUF_NO_RTTI"
 autoreconf -fi
 ## NOTE: The host *must* be running the exact same version (for protoc)
-if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	# Needs to be PIC on K5, or mosh throws a fit (reloc against a local symbol, as always)
 	./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static=yes --enable-shared=no --with-zlib --with-protoc=/usr/bin/protoc --with-pic
 elif [[ "${KINDLE_TC}" == "K3" ]] ; then
@@ -2604,7 +2604,7 @@ patch -p1 < /usr/portage/net-misc/mosh/files/mosh-1.2.5-git-version.patch
 ./autogen.sh
 if [[ "${KINDLE_TC}" == "K3" ]] || [[ "${KINDLE_TC_IS_GLIBC_219}" == "true" ]] ; then
 	./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --disable-completion --enable-client --enable-server --disable-examples --disable-urw --disable-hardening --without-utempter
-elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --disable-completion --enable-client --enable-server --disable-examples --disable-urw --enable-hardening --without-utempter
 fi
 make ${JOBSFLAGS} V=1
@@ -2656,7 +2656,7 @@ if [[ "${KINDLE_TC}" == "K3" ]] ; then
 	env MPN_PATH="arm/v6 arm/v5 arm generic" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-assembly --enable-static --disable-shared --disable-cxx
 elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	env MPN_PATH="arm/neon mpn/arm/v7a/cora8 arm/v6t2 arm/v6 arm/v5 arm generic" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-assembly --enable-static --disable-shared --disable-cxx
-elif [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+elif [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 	env MPN_PATH="arm/neon mpn/arm/v7a/cora9 arm/v6t2 arm/v6 arm/v5 arm generic" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-assembly --enable-static --disable-shared --disable-cxx
 fi
 make ${JOBSFLAGS}
@@ -2681,7 +2681,7 @@ if [[ "${USE_STABLE_NETTLE}" == "true" ]] ; then
 		env ac_cv_host="armv7l-kindle5-linux-gnueabi" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
 	elif [[ "${KINDLE_TC}" == "PW2" ]] ; then
 		env ac_cv_host="armv7l-kindlepw2-linux-gnueabi" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
-	elif [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+	elif [[ "${KINDLE_TC}" == "KHF" ]] ; then
 		env ac_cv_host="armv7l-kindlepw2-linux-gnueabihf" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
 	elif [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 		env ac_cv_host="armv7l-kobo-linux-gnueabihf" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
@@ -2708,7 +2708,7 @@ else
 		env ac_cv_host="armv7l-kindle5-linux-gnueabi" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
 	elif [[ "${KINDLE_TC}" == "PW2" ]] ; then
 		env ac_cv_host="armv7l-kindlepw2-linux-gnueabi" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
-	elif [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+	elif [[ "${KINDLE_TC}" == "KHF" ]] ; then
 		env ac_cv_host="armv7l-kindlepw2-linux-gnueabihf" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
 	elif [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 		env ac_cv_host="armv7l-kobo-linux-gnueabihf" ./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --disable-shared --enable-assembler --enable-public-key --disable-openssl --disable-documentation --enable-arm-neon
@@ -2734,7 +2734,7 @@ export KT_NO_USERATHOST_TAG="true"
 export CFLAGS="${RICE_CFLAGS} -DKT_USERATHOST='\"niluje@tyrande\"'"
 # Setup an RPATH for OpenSSL on the K5....
 # Keep it K5 only, because on the K3, so far we haven't had any issues with KindleTool, and we use it in the JailBreak, too, so an rpath isn't the way to go
-#if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+#if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 #	export LDFLAGS="${BASE_LDFLAGS} -Wl,-rpath=${DEVICE_USERSTORE}/usbnet/lib"
 #fi
 # We now ship our own shared zlib, so let's (optionally) use it
@@ -2743,7 +2743,7 @@ make ${JOBSFLAGS} kindle
 export LDFLAGS="${BASE_LDFLAGS}"
 unset KT_NO_USERATHOST_TAG
 export CFLAGS="${BASE_CFLAGS}"
-#if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+#if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 #	export LDFLAGS="${BASE_LDFLAGS}"
 #fi
 cp KindleTool/Kindle/kindletool ${BASE_HACKDIR}/USBNetwork/src/usbnet/bin/kindletool
@@ -2780,7 +2780,7 @@ autoreconf -fi
 export CFLAGS="${RICE_CFLAGS}"
 # Pull our own zlib, to avoid symbol versioning issues (and enjoy better PNG compression perf)...
 export LDFLAGS="${BASE_LDFLAGS} -Wl,-rpath=${DEVICE_USERSTORE}/linkss/lib -Wl,-rpath=${DEVICE_USERSTORE}/usbnet/lib"
-if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --enable-shared --enable-arm-neon=yes
 else
 	./configure --prefix=${TC_BUILD_DIR} --host=${CROSS_TC} --enable-static --enable-shared
@@ -2809,7 +2809,7 @@ update_title_info
 export CFLAGS="${BASE_CPPFLAGS} ${RICE_CFLAGS}"
 mkdir -p build
 cd build
-if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	${CMAKE} .. -DENABLE_STATIC=OFF -DENABLE_SHARED=ON -DWITH_MEM_SRCDST=ON -DWITH_JAVA=OFF
 else
 	${CMAKE} .. -DENABLE_STATIC=OFF -DENABLE_SHARED=ON -DWITH_MEM_SRCDST=ON -DWITH_JAVA=OFF -DREQUIRE_SIMD=OFF -DWITH_SIMD=OFF
@@ -2905,7 +2905,7 @@ make install
 ## ICU for SQLite
 # NOTE: This works perfectly well, but with a caveat: libicudata is massive, meaning we end up with oversized packages. Besides, Amazon doesn't seem to rely on it directly through libsqlite3...
 # Only do it on the K5/PW2 packages, where the size is much more manageable ;).
-if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
+if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] || [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 	SQLITE_WITH_ICU="true"
 fi
 if [[ "${SQLITE_WITH_ICU}" == "true" ]] ; then
@@ -3086,7 +3086,7 @@ if [[ "${KINDLE_TC}" == "K3" ]] ; then
 	make clean
 	make ${JOBSFLAGS} sharedlib SHARED=1 KINDLE=1 LEGACY=1
 	make ${JOBSFLAGS} striplib
-elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 	make ${JOBSFLAGS} kindle
 	cp Release/fbink ${BASE_HACKDIR}/USBNetwork/src/usbnet/bin/fbink
 	make clean
@@ -5157,7 +5157,7 @@ done
 cd strace
 update_title_info
 # Regen the ioctl list...
-if [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+if [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 	# NOTE: Thankfully, this one appears sane, and include/linux/linux/mxcfb.h still matches the one from 5.6.5 ;).
 	#       Make sure you're using the PW2 build: https://s3.amazonaws.com/kindledownloads/Kindle_src_5.9.5.1_3301940011.tar.gz
 	#ksrc="${HOME}/Kindle/SourceCode_Packages/5.9.5.1/gplrelease/linux"
@@ -5237,7 +5237,7 @@ else
 		wget "https://raw.githubusercontent.com/NiLuJe/FBInk/master/eink/sunxi-kobo.h" -O src/linux/sunxi-kobo.h
 		wget "https://raw.githubusercontent.com/NiLuJe/FBInk/master/eink/ion-kobo.h" -O src/linux/ion-kobo.h
 		patch -p1 < ${SVN_ROOT}/Configs/trunk/Kindle/Misc/strace-ioctls_sym-tweaks-kobo.patch
-	elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+	elif [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 		# Rely on our franken headers to support the full lineup...
 		wget "https://raw.githubusercontent.com/NiLuJe/FBInk/master/eink/mxcfb-kindle.h" -O src/linux/mxcfb-kindle.h
 		wget "https://raw.githubusercontent.com/NiLuJe/FBInk/master/eink/mtk-kindle.h" -O src/linux/mtk-kindle.h
@@ -5259,7 +5259,7 @@ else
 	unset ksrc asrc
 	popd
 	# Apply the ioctl decode patch for our TC. Based on https://gist.github.com/erosennin/593de363a4361411cd4f (erosennin's patch for https://github.com/koreader/koreader/issues/741) ;).
-	if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+	if [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 		patch -p1 < ${SVN_ROOT}/Configs/trunk/Kindle/Misc/strace-mxcfb-ioctls-kindle.patch
 	elif [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 		patch -p1 < ${SVN_ROOT}/Configs/trunk/Kindle/Misc/strace-mxcfb-ioctls-kobo.patch
@@ -5370,7 +5370,7 @@ if [[ "${KINDLE_TC}" != "K3" ]] ; then
 	./autogen.sh
 	# Regen the syscall list...
 	cd sysdeps/linux-gnu
-	if [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+	if [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 		./mksyscallent < ${HOME}/Kindle/SourceCode_Packages/5.9.5.1/gplrelease/linux/arch/arm/include/asm/unistd.h > arm/syscallent.h
 		./mksignalent < ${HOME}/Kindle/SourceCode_Packages/5.9.5.1/gplrelease/linux/arch/arm/include/asm/signal.h > arm/signalent.h
 	elif [[ "${KINDLE_TC}" == "K5" ]] ; then
@@ -5721,7 +5721,7 @@ for patchfile in patch/*.patch ; do
 done
 patch -p1 < /usr/portage/sys-devel/gdb/files/gdb-8.3.1-verbose-build.patch
 # NOTE: Workaround weird-ass error: 'log2' is not a member of 'std' when using the K3/K5/PW2 TC...
-if [[ "${KINDLE_TC}" == "K3" ]] || [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "PW2HF" ]] ; then
+if [[ "${KINDLE_TC}" == "K3" ]] || [[ "${KINDLE_TC}" == "K5" ]] || [[ "${KINDLE_TC}" == "PW2" ]] || [[ "${KINDLE_TC}" == "KHF" ]] ; then
 	patch -p1 < ${SVN_ROOT}/Configs/trunk/Kindle/Misc/gdb-10.1-k3-log2-fix.patch
 fi
 # Setup our rpath... (And link against the STL statically)
