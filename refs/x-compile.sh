@@ -631,9 +631,9 @@ case ${KINDLE_TC} in
 				CROSS_TC="arm-kindlepw2-linux-gnueabi"
 				;;
 			KHF )
-				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a53 -mfpu=neon -mfloat-abi=hard -mthumb"
+				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -mthumb"
 
-				CROSS_TC="arm-kindlehf-linux-gnueabihf"
+				CROSS_TC="arm-kindletesthf-linux-gnueabihf"
 				;;
 		esac
 		TC_BUILD_DIR="${HOME}/Kindle/CrossTool/Build_${KINDLE_TC}"
@@ -1975,7 +1975,7 @@ if [[ "${KINDLE_TC}" == "KOBO" ]] ; then
 fi
 # NOTE: We won't be resetting CROSS_COMPILE, a few other packages down the line make use of it...
 #       It being slightly non-standard may explain why I never simply made it part of the env setup?
-export CROSS_COMPILE="${CROSS_TC}-"
+	export CROSS_COMPILE="${CROSS_TC}-"
 #export CFLAGS="${BASE_CFLAGS} -fno-strict-aliasing"
 #export CXXFLAGS="${BASE_CFLAGS} -fno-strict-aliasing"
 #patch -p1 < /usr/portage/sys-apps/busybox/files/busybox-1.26.2-bb.patch
@@ -2134,7 +2134,7 @@ if [[ "${KINDLE_TC}" == "K5" || "${KINDLE_TC}" == "PW2" || "${KINDLE_TC}" == "KH
 
 EOF
 	#make menuconfig
-	cp -v ${SVN_ROOT}/Configs/trunk/Kindle/Misc/busybox-1.34.1-gandalf-config .config
+	cp -v ${SVN_ROOT} .config
 	make oldconfig
 	sleep 5
 	make ${JOBSFLAGS} AR="${CROSS_TC}-gcc-ar" RANLIB="${CROSS_TC}-gcc-ranlib" NM="${CROSS_TC}-gcc-nm" V=1
