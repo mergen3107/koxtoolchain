@@ -122,13 +122,7 @@ case $1 in
 	kindlehf)
 		Build_CT-NG \
 			https://github.com/NotMarek/crosstool-ng.git \
-			3ac8537f6a1f7eebd3b5768e5e0a20516702887c \
-			"arm-${1}-linux-gnueabihf"
-		;;
-	kindletesthf)
-		Build_CT-NG \
-			https://github.com/NotMarek/crosstool-ng.git \
-			0733216fc3edf0d5a993d14070a1a615e4d51f8d \
+			50527c119e56fb218a47b5334bedfd7b15b0f3a8 \
 			"arm-${1}-linux-gnueabihf"
 		;;
 	kindlepw2)

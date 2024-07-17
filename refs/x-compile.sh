@@ -633,7 +633,7 @@ case ${KINDLE_TC} in
 			KHF )
 				ARCH_FLAGS="-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -mthumb"
 
-				CROSS_TC="arm-kindletesthf-linux-gnueabihf"
+				CROSS_TC="arm-kindlehf-linux-gnueabihf"
 				;;
 		esac
 		TC_BUILD_DIR="${HOME}/Kindle/CrossTool/Build_${KINDLE_TC}"
